@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404
 import datetime
 from .models import Post
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from django.views.generic import ListView
 # Create your views here.
 
 
@@ -30,3 +30,10 @@ def post_detail(request, year, month, day, post):
                                     publish__day=day)
     
     return render(request, "blog/posts/detail.html", {'post':post})
+
+
+class PostListView(ListView):
+    queryset = Post.objects.all()
+    context_object_name = 'post_list'
+    paginate_by = 5
+    template_name = "blog/posts/list.html"
