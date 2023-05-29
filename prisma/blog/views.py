@@ -4,7 +4,7 @@ import datetime
 from .models import Post
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
-from .forms import EmailPostForm
+from .forms import EmailPostForm, CommentPostForm
 from django.core.mail import send_mail
 # Create your views here.
 
@@ -25,12 +25,20 @@ def post_list(request):
     return render(request, 'blog/posts/list.html', {'post_list': posts, 'page': page})
 
 def post_detail(request, year, month, day, post):
-    post = get_object_or_404(Post, slug=post,
-                                    publish__year=year,
-                                    publish__month=month,
-                                    publish__day=day)
+    post = get_object_or_404(Post, slug=post,publish__year=year,publish__month=month,publish__day=day)
+    comments = post.comments.filter(active=True)
+    comment_form = CommentPostForm()
+    new_comment = None
     
-    return render(request, "blog/posts/detail.html", {'post':post})
+    if request.method == 'POST':
+        comment_form = CommentPostForm(data=request.POST)
+
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.post = post
+            new_comment.save()
+    
+    return render(request, "blog/posts/detail.html", {'post':post, 'comments':comments, 'comment_form':comment_form, 'new_comment':new_comment})
 
 def post_share(request, post_id):
     post = get_object_or_404(Post, id=post_id)
