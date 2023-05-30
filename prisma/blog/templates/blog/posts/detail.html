@@ -1,4 +1,7 @@
 {% extends 'blog/base.html' %}
+{% load blog_tags %}
+
+
 {% block title %}{{ post.title }}{% endblock %}
 
 
@@ -12,7 +15,7 @@
             Share Post 📤
         </a>
     </p>
-    {{ post.body|linebreaks }}
+    {{ post.body|markdown_format }}
     <h2>Similar posts</h2>
     {% for post in similar_posts %}
         <p>
