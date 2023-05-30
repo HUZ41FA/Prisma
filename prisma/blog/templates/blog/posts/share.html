@@ -5,10 +5,11 @@
 {% block content %}
 
 {% if sent %}
-    <h1>E-mail successfully sent</h1>
+    <h1>✅ E-mail successfully sent</h1>
     <p>
         "{{ post.title }}" was successfully sent to <strong>{{ form.cleaned_data.to }}</strong>.
     </p>
+    <a href="{{post.get_absolute_url}}"><input type="submit" value="Continue Reading"></a>
  {% else %}
     <h1>Share "{{ post.title }}" by e-mail</h1>
     <form method="post">

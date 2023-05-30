@@ -4,13 +4,15 @@
 {% block content %}
 
 <h1>Posts</h1>
-<div style="border:2px solid black; padding: 20px; border-radius: 40px; margin-bottom: 30px;">
+<div style="margin-bottom: 30px;">
     {% for post in post_list %}
     <h2>
         <a href="{{ post.get_absolute_url }}">
         {{ post.title }}
         </a>
+        
     </h2>
+    <p class="tags">Tags: {{ post.tags.all|join:", " }}</p>
     <p class="date">
         Published {{ post.publish }} by {{ post.author }}
     </p>
@@ -19,7 +21,7 @@
 {% endfor %}
 </div>
 
-<div style="display:flex; flex-direction: center; justify-content: center;">
+<div style="display:flex; flex-direction: center; justify-content: center; margin-bottom: 30px;">
     {% include 'blog/pagination.html' with page=page_obj %}
 </div>
 

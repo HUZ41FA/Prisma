@@ -9,7 +9,7 @@
     </p>
     <p>
         <a href="{% url "blog:post_share" post.id %}">
-            Share Post
+            Share Post 📤
         </a>
     </p>
     {{ post.body|linebreaks }}
@@ -31,9 +31,9 @@
         <p>There are no comments yet.</p>
     {% endfor %}
     {% if new_comment %}
-        <h2>Your comment has been added.</h2>
+        <h2>Your comment has been added. ✅</h2>
     {% else %}
-        <h2>Add a new comment</h2>
+        <h2>Add a new comment 💬</h2>
         <form method="post">
             {{ comment_form.as_p }}
             {% csrf_token %}
