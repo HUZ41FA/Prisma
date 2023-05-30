@@ -12,7 +12,7 @@ from django.db.models import Count
 
 # A class based view "PostListView" is used instead of this
 def post_list(request, tag_slug=None):
-    post_list = Post.objects.all()
+    post_list = Post.objects.filter(status="published")
     page = request.GET.get('page')
     tag = None
 
