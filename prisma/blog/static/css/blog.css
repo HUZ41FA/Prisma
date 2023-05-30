@@ -6,7 +6,7 @@ body {
 }
 
 a { 
-    color:#00abff;
+    color:#9d00ff;
     text-decoration:none; 
 }
 
@@ -91,3 +91,12 @@ input[type=submit] {
     font-size:12px;
     color:#666;
 }
+
+.badge {
+    border:1px solid black; 
+    padding:3px; 
+    background-color: green; 
+    color:white
+}
+
+/* style="border:1px solid black; padding:3px; background-color: green; color:white" */
