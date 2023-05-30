@@ -13,6 +13,14 @@
         </a>
     </p>
     {{ post.body|linebreaks }}
+    <h2>Similar posts</h2>
+    {% for post in similar_posts %}
+        <p>
+            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        </p>
+    {% empty %}
+        There are no similar posts yet.
+    {% endfor %}
     {% comment %}Here we are using Django ORM Query set in templates{% endcomment %}
     {% with comments.count as total_comments %}
         <h2>

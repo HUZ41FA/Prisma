@@ -6,14 +6,22 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
 from .forms import EmailPostForm, CommentPostForm
 from django.core.mail import send_mail
+from taggit.models import Tag
+from django.db.models import Count
 # Create your views here.
 
 # A class based view "PostListView" is used instead of this
-def post_list(request):
+def post_list(request, tag_slug=None):
     post_list = Post.objects.all()
-    single_post = Post.objects.get(id=10)
-    paginator = Paginator(post_list, 5)
     page = request.GET.get('page')
+    tag = None
+
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        post_list = post_list.filter(tags__in=[tag])
+
+    paginator = Paginator(post_list, 5)
+
     try:
         posts = paginator.page(page)
     except PageNotAnInteger:
@@ -22,7 +30,7 @@ def post_list(request):
         posts = paginator.page(paginator.num_pages)
 
 
-    return render(request, 'blog/posts/list.html', {'post_list': posts, 'page': page})
+    return render(request, 'blog/posts/list.html', {'post_list': posts, 'page': page, 'tag':tag})
 
 def post_detail(request, year, month, day, post):
     post = get_object_or_404(Post, slug=post,publish__year=year,publish__month=month,publish__day=day)
@@ -38,7 +46,12 @@ def post_detail(request, year, month, day, post):
             new_comment.post = post
             new_comment.save()
     
-    return render(request, "blog/posts/detail.html", {'post':post, 'comments':comments, 'comment_form':comment_form, 'new_comment':new_comment})
+    # List of similar posts
+    post_tags_ids = post.tags.values_list('id', flat=True)
+    similar_posts = Post.objects.filter(tags__in=post_tags_ids).exclude(id=post.id)
+    similar_posts = similar_posts.annotate(same_tags=Count('tags')).order_by('-same_tags','-publish')[:4]
+
+    return render(request, "blog/posts/detail.html", {'post':post, 'comments':comments, 'comment_form':comment_form, 'new_comment':new_comment, 'similar_posts':similar_posts})
 
 def post_share(request, post_id):
     post = get_object_or_404(Post, id=post_id)

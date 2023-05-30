@@ -5,6 +5,9 @@
 
 <h1>Posts</h1>
 <div style="margin-bottom: 30px;">
+    {% if tag %}
+         <h2>Posts tagged with "{{ tag.name }}"</h2>
+    {% endif %}
     {% for post in post_list %}
     <h2>
         <a href="{{ post.get_absolute_url }}">
@@ -12,7 +15,15 @@
         </a>
         
     </h2>
-    <p class="tags">Tags: {{ post.tags.all|join:", " }}</p>
+    <p class="tags">
+        Tags:
+        {% for tag in post.tags.all %}
+            <a href="{% url "blog:post_list_by_tag" tag.slug %}" style="border:1px solid black; padding:3px; background-color: #00abff; color:white;border-radius:10px; font-size:12px" >
+                {{ tag.name }}
+            </a>
+            {% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>
     <p class="date">
         Published {{ post.publish }} by {{ post.author }}
     </p>
@@ -22,7 +33,7 @@
 </div>
 
 <div style="display:flex; flex-direction: center; justify-content: center; margin-bottom: 30px;">
-    {% include 'blog/pagination.html' with page=page_obj %}
+    {% include 'blog/pagination.html' with page=post_list %}
 </div>
 
 {% endblock %}
