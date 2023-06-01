@@ -4,13 +4,13 @@ import datetime
 from .models import Post
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
-from .forms import EmailPostForm, CommentPostForm
+from .forms import EmailPostForm, CommentPostForm, SearchForm
 from django.core.mail import send_mail
 from taggit.models import Tag
 from django.db.models import Count
+from django.contrib.postgres.search import SearchVector
 # Create your views here.
 
-# A class based view "PostListView" is used instead of this
 def post_list(request, tag_slug=None):
     post_list = Post.objects.filter(status="published")
     page = request.GET.get('page')
@@ -80,9 +80,24 @@ def post_share(request, post_id):
 
     return render(request, 'blog/posts/share.html', {'form': form, 'post' : post, 'sent':sent})
 
-class PostListView(ListView):
 
     queryset = Post.objects.all()
     context_object_name = 'post_list'
     paginate_by = 5
     template_name = "blog/posts/list.html"
+
+def post_search(request):
+    form = SearchForm()
+    query = None
+    results = []
+    if request.method != 'POST':
+        if 'query' in request.GET:
+            form = SearchForm(request.GET)
+
+            if form.is_valid():
+                query = form.cleaned_data['query']
+
+                results = Post.objects.annotate(search=SearchVector('title', 'body'),).filter(search=query)
+
+    return render(request, 'blog/posts/search.html', {'form':form, 'results':results, 'query':query})
+

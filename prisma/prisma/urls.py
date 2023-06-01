@@ -19,6 +19,7 @@ from django.urls import include, path
 from django.contrib.sitemaps.views import sitemap
 from blog.sitemaps import PostSitemap
 
+
 admin.site.site_title = "Prima"
 admin.site.index_title = "Site Administration"
 admin.site.site_header = "Prisma Blog Administration"
